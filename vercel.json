@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "rag-system-001-web",
+  "name": "plep-rag-system-001-web",
   "builds": [
     {
       "src": "apps/web/package.json",
