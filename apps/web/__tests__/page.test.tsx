@@ -1,7 +1,20 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import Home from '../app/page'
 
+// Mock fetch for health check tests
+const mockFetch = jest.fn()
+global.fetch = mockFetch
+
 describe('Home Page - UI Shell', () => {
+  beforeEach(() => {
+    mockFetch.mockClear()
+    jest.spyOn(console, 'log').mockImplementation()
+    jest.spyOn(console, 'error').mockImplementation()
+  })
+
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
   it('renders query interface heading', () => {
     render(<Home />)
     
@@ -67,5 +80,60 @@ describe('Home Page - UI Shell', () => {
     const flexContainer = formContainer?.querySelector('[class*="flex"]')
     
     expect(flexContainer).toHaveClass('flex', 'flex-col', 'md:flex-row')
+  })
+
+  describe('Health Check Integration', () => {
+    it('calls health endpoint on page load', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ status: 'ok' })
+      })
+
+      render(<Home />)
+
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith('/api/health')
+      })
+    })
+
+    it('logs success message when health check passes', async () => {
+      const consoleSpy = jest.spyOn(console, 'log')
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ status: 'ok' })
+      })
+
+      render(<Home />)
+
+      await waitFor(() => {
+        expect(consoleSpy).toHaveBeenCalledWith('✅ Backend connectivity verified:', { status: 'ok' })
+      })
+    })
+
+    it('logs error when health check fails with non-200 status', async () => {
+      const consoleSpy = jest.spyOn(console, 'error')
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500
+      })
+
+      render(<Home />)
+
+      await waitFor(() => {
+        expect(consoleSpy).toHaveBeenCalledWith('❌ Health check failed with status:', 500)
+      })
+    })
+
+    it('logs error when health check fails with network error', async () => {
+      const consoleSpy = jest.spyOn(console, 'error')
+      const networkError = new Error('Network error')
+      mockFetch.mockRejectedValueOnce(networkError)
+
+      render(<Home />)
+
+      await waitFor(() => {
+        expect(consoleSpy).toHaveBeenCalledWith('❌ Health check failed - network or endpoint error:', networkError)
+      })
+    })
   })
 })

@@ -1,9 +1,28 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function Home() {
   const [query, setQuery] = useState('')
+
+  useEffect(() => {
+    const checkHealth = async () => {
+      try {
+        const response = await fetch('/api/health')
+        
+        if (response.ok) {
+          const data = await response.json()
+          console.log('✅ Backend connectivity verified:', data)
+        } else {
+          console.error('❌ Health check failed with status:', response.status)
+        }
+      } catch (error) {
+        console.error('❌ Health check failed - network or endpoint error:', error)
+      }
+    }
+
+    checkHealth()
+  }, [])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
