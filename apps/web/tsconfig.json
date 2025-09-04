@@ -12,7 +12,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "types/jest-dom.d.ts"
   ],
   "exclude": ["node_modules"]
 }
