@@ -11,9 +11,12 @@
     "test": "jest"
   },
   "dependencies": {
+    "@types/node-fetch": "^2.6.13",
     "next": "^14.2.0",
+    "node-fetch": "^2.7.0",
     "react": "^18.3.0",
-    "react-dom": "^18.3.0"
+    "react-dom": "^18.3.0",
+    "simple-git": "^3.28.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.0.0",
