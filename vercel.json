@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "rag-system",
+  "name": "rag-system-001-web",
   "builds": [
     {
       "src": "apps/web/package.json",
