@@ -71,17 +71,6 @@ export class GitHubAPIService {
     return `${url}_${JSON.stringify(params || {})}`;
   }
 
-  private getCachedResponse(cacheKey: string, etag?: string) {
-    const cached = this.etagCache.get(cacheKey);
-    if (cached && etag && cached.etag === etag) {
-      const age = Date.now() - cached.timestamp;
-      if (age < 3600000) { // 1 hour cache
-        return cached.data;
-      }
-    }
-    return null;
-  }
-
   private setCachedResponse(cacheKey: string, etag: string, data: any) {
     this.etagCache.set(cacheKey, {
       etag,
